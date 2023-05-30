@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # db
 
 This template should help get you started developing with Vue 3 in Vite.
@@ -28,7 +27,5 @@ npm run dev
 ```sh
 npm run build
 ```
-=======
 # DB_frontend
 Frontend for my Database Course Design Tongji University
->>>>>>> a87e138b4539288b45616b733257f98927350254
