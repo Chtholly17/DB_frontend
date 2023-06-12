@@ -17,7 +17,7 @@
         </div>
         <el-input
           ref="username"
-          v-model="loginData.username"
+          v-model="number"
           class="flex-1"
           size="large"
           :placeholder="$t('login.username')"
@@ -35,9 +35,9 @@
             <svg-icon icon-class="password" />
           </span>
           <el-input
-            v-model="loginData.password"
+            v-model="password"
             class="flex-1"
-            placeholder="密码"
+            :placeholder="$t('login.password')"
             :type="passwordVisible === false ? 'password' : 'input'"
             size="large"
             name="password"
@@ -53,23 +53,6 @@
         </el-form-item>
       </el-tooltip>
 
-      <!-- 验证码 -->
-      <el-form-item prop="verifyCode">
-        <span class="p-2 text-white">
-          <svg-icon icon-class="verify_code" />
-        </span>
-        <el-input
-          v-model="loginData.verifyCode"
-          auto-complete="off"
-          :placeholder="$t('login.verifyCode')"
-          class="w-[60%]"
-          @keyup.enter="handleLogin"
-        />
-
-        <div class="captcha">
-          <img :src="captchaBase64" @click="getCaptcha" />
-        </div>
-      </el-form-item>
 
       <el-button
         size="default"
@@ -80,11 +63,6 @@
         >{{ $t("login.login") }}
       </el-button>
 
-      <!-- 账号密码提示 -->
-      <div class="mt-4 text-white text-sm">
-        <span>{{ $t("login.username") }}: admin</span>
-        <span class="ml-4"> {{ $t("login.password") }}: 123456</span>
-      </div>
     </el-form>
   </div>
 </template>
@@ -101,10 +79,12 @@ import { useUserStore } from "@/store/modules/user";
 import { LocationQuery, LocationQueryValue, useRoute } from "vue-router";
 import { getCaptchaApi } from "@/api/auth";
 import { LoginData } from "@/api/auth/types";
+import axios from "axios";
+import path from "@/api/path";
+import {useGlobal} from "@/store/residentStore";
+import { da } from "element-plus/es/locale";
 
 const userStore = useUserStore();
-const route = useRoute();
-
 /**
  * 按钮loading
  */
@@ -120,7 +100,7 @@ const passwordVisible = ref(false);
 /**
  * 验证码图片Base64字符串
  */
-const captchaBase64 = ref();
+// const captchaBase64 = ref();
 
 /**
  * 登录表单引用
@@ -128,14 +108,17 @@ const captchaBase64 = ref();
 const loginFormRef = ref(ElForm);
 
 const loginData = ref<LoginData>({
-  username: "admin",
-  password: "123456",
+	number: "18090416684",
+  password: "1277411655",
 });
+
+const number = ref("18090416684");
+const password = ref("1277411655");
 
 const loginRules = {
   username: [{ required: true, trigger: "blur" }],
   password: [{ required: true, trigger: "blur", validator: passwordValidator }],
-  verifyCode: [{ required: true, trigger: "blur" }],
+  // verifyCode: [{ required: true, trigger: "blur" }],
 };
 
 /**
@@ -157,56 +140,54 @@ function checkCapslock(e: any) {
   isCapslock.value = key && key.length === 1 && key >= "A" && key <= "Z";
 }
 
-/**
- * 获取验证码
- */
-function getCaptcha() {
-  getCaptchaApi().then(({ data }) => {
-    const { verifyCodeBase64, verifyCodeKey } = data;
-    loginData.value.verifyCodeKey = verifyCodeKey;
-    captchaBase64.value = verifyCodeBase64;
-  });
-}
+
 
 /**
  * 登录
  */
 function handleLogin() {
-  loginFormRef.value.validate((valid: boolean) => {
-    if (valid) {
-      loading.value = true;
-      userStore
-        .login(loginData.value)
-        .then(() => {
-          const query: LocationQuery = route.query;
-
-          const redirect = (query.redirect as LocationQueryValue) ?? "/";
-
-          const otherQueryParams = Object.keys(query).reduce(
-            (acc: any, cur: string) => {
-              if (cur !== "redirect") {
-                acc[cur] = query[cur];
-              }
-              return acc;
-            },
-            {}
-          );
-
-          router.push({ path: redirect, query: otherQueryParams });
-        })
-        .catch(() => {
-          // 验证失败，重新生成验证码
-          getCaptcha();
-        })
-        .finally(() => {
-          loading.value = false;
-        });
-    }
-  });
+		console.log(number.value)
+		console.log(password.value)
+		loading.value = true;
+		let data = new FormData();
+    data.append("number", number.value);
+    data.append("password", password.value);
+		userStore.login(data).then(() => {
+			router.push({path: '/dashboard'});
+		}).catch(() => {
+		}).finally(() => {
+			loading.value = false;
+		});
+	loading.value = false;
+	  // axios.post(path.baseUrl + path.login, data).then(res => {
+		// 		console.log(res)
+		// 		// const query: LocationQuery = route.query;
+		// 		if(res.data.code == 1) {
+		// 		// const redirect = (query.redirect as LocationQueryValue) ?? "/";
+		// 			console.log(router.currentRoute);
+		// 			let data = new FormData();
+		// 			data.append("number", number.value);
+		//
+		// 			axios.post(path.baseUrl + path.getResidentByNumber, data).then((res) => {
+		// 				console.log(res.data.data)
+		// 	  		router.push({path: '/dashboard'});
+		// 				const {setId} = useGlobal()
+		// 				setId(res.data.data.id)
+		// 				console.log(res)
+		// 			});
+		// 	} else {
+		// 		console.log(res.data.msg)
+		// 		// output an error message
+		// 	}
+		// }).catch(err => {
+		// 	console.log(err)
+		// }).finally(() => {
+		// 	loading.value = false;
+		// })
 }
 
 onMounted(() => {
-  getCaptcha();
+  // getCaptcha();
 });
 </script>
 

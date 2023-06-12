@@ -1,5 +1,5 @@
 import request from '@/utils/request';
-import { AxiosPromise } from 'axios';
+import axios, { AxiosPromise } from 'axios';
 import { CaptchaResult, LoginData, LoginResult } from './types';
 
 /**
@@ -9,11 +9,13 @@ import { CaptchaResult, LoginData, LoginResult } from './types';
  * @returns
  */
 export function loginApi(data: LoginData): AxiosPromise<LoginResult> {
-  return request({
-    url: '/api/v1/auth/login',
-    method: 'post',
-    params: data
-  });
+	console.log(data);
+  // return request({
+  //   url: '/login',
+  //   method: 'post',
+  //   params: data
+  // });
+  return axios.post('/login', data);
 }
 
 /**

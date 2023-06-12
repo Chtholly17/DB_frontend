@@ -63,7 +63,7 @@ function handleOutsideClick() {
       @click="handleOutsideClick"
     ></div>
 
-    <Sidebar class="sidebar-container" />
+<!--    <Sidebar class="sidebar-container" />-->
 
     <div :class="{ hasTagsView: showTagsView }" class="main-container">
       <div :class="{ 'fixed-header': fixedHeader }">

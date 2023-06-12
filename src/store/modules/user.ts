@@ -2,17 +2,26 @@ import { defineStore } from "pinia";
 
 import { loginApi, logoutApi } from "@/api/auth";
 import { getUserInfo } from "@/api/user";
-import { resetRouter } from "@/router";
+import router, { resetRouter } from "@/router";
 import { store } from "@/store";
 
 import { LoginData } from "@/api/auth/types";
 import { UserInfo } from "@/api/user/types";
 
 import { useStorage } from "@vueuse/core";
+import axios from "axios";
+import path from "@/api/path";
+import {useGlobal} from "@/store/residentStore";
 
 export const useUserStore = defineStore("user", () => {
   // state
   const userId = ref();
+  const id = ref("");
+  const gender = ref("");
+  const age = ref(0);
+  const residence = ref(0);
+  const name = ref("");
+  const number = ref("");
   const token = useStorage("accessToken", "");
   const nickname = ref("");
   const avatar = ref("");
@@ -25,17 +34,37 @@ export const useUserStore = defineStore("user", () => {
    * @param {LoginData}
    * @returns
    */
-  function login(loginData: LoginData) {
+  function login(loginData: FormData) {
     return new Promise<void>((resolve, reject) => {
-      loginApi(loginData)
-        .then((response) => {
-          const { tokenType, accessToken } = response.data;
-          token.value = tokenType + " " + accessToken; // Bearer eyJhbGciOiJIUzI1NiJ9.xxx.xxx
-          resolve();
-        })
-        .catch((error) => {
-          reject(error);
-        });
+		axios.post(path.baseUrl + path.login, loginData).then(res => {
+			console.log(res)
+			// const query: LocationQuery = route.query;
+			if(res.data.code == 1) {
+				// const redirect = (query.redirect as LocationQueryValue) ?? "/";
+				console.log(router.currentRoute);
+				let data = new FormData();
+				data.append("number", loginData.get("number") as string);
+				number.value = loginData.get("number") as string;
+				axios.post(path.baseUrl + path.getResidentByNumber, data).then((res) => {
+					console.log(res.data.data)
+					id.value = res.data.data.id;
+					name.value = res.data.data.name;
+					gender.value = res.data.data.gender;
+					age.value = res.data.data.age;
+					residence.value = res.data.data.residence;
+					console.log(res)
+					resolve();
+				}).catch(err => {
+					console.log(err)
+					reject(err);
+				})
+			} else {
+				ElMessage.error(res.data.msg);
+			}
+		}).catch(err => {
+			console.log(err)
+			reject(err);
+		})
     });
   }
 
@@ -66,16 +95,8 @@ export const useUserStore = defineStore("user", () => {
   // 注销
   function logout() {
     return new Promise<void>((resolve, reject) => {
-      logoutApi()
-        .then(() => {
-          resetRouter();
-          resetToken();
-          location.reload(); // 清空路由
-          resolve();
-        })
-        .catch((error) => {
-          reject(error);
-        });
+      // return to login page
+		router.replace("/login");
     });
   }
 
@@ -88,6 +109,12 @@ export const useUserStore = defineStore("user", () => {
     perms.value = [];
   }
   return {
+  	name,
+  	id,
+  	gender,
+  	age,
+  	residence,
+  	number,
     token,
     nickname,
     avatar,

@@ -1,11 +1,11 @@
 <script setup lang="ts">
-defineOptions({
-  // eslint-disable-next-line vue/no-reserved-component-names
-  name: "Dashboard",
-  inheritAttrs: false,
-});
+
+import axios from "axios";
+
+
 
 import { useUserStore } from "@/store/modules/user";
+import { defineComponent } from 'vue'
 import { useTransition, TransitionPresets } from "@vueuse/core";
 
 import GithubCorner from "@/components/GithubCorner/index.vue";
@@ -13,8 +13,25 @@ import SvgIcon from "@/components/SvgIcon/index.vue";
 import BarChart from "./components/BarChart.vue";
 import PieChart from "./components/PieChart.vue";
 import RadarChart from "./components/RadarChart.vue";
+import {useGlobal} from "@/store/residentStore";
+import router from "@/router";
+import path from "@/api/path";
+
+defineComponent({
+  // eslint-disable-next-line vue/no-reserved-component-names
+  name: "Dashboard",
+  inheritAttrs: false,
+});
+
+
+const number = ref(router.currentRoute.value.query.number);
+// const {getId} = useGlobal();
+// const Id = getId();
+// console.log(Id);
 
 const userStore = useUserStore();
+
+const name = ref(userStore.name)
 
 const date: Date = new Date();
 
@@ -32,7 +49,10 @@ const greetings = computed(() => {
   }
 });
 
+const resident = ref();
+
 const duration = 5000;
+const showVisitList = ref(false);
 
 // 收入金额
 const amount = ref(0);
@@ -48,7 +68,13 @@ const visitCountOutput = useTransition(visitCount, {
   duration: duration,
   transition: TransitionPresets.easeOutExpo,
 });
-visitCount.value = 2000;
+let idFrom = new FormData();
+idFrom.append("id", userStore.id);
+axios.post(path.baseUrl + path.getVisitById, idFrom).then((res) => {
+	visitCount.value = res.data.data.length;
+}).catch(err => {
+	console.log(err)
+})
 
 //消息数
 const messageCount = ref(0);
@@ -56,7 +82,13 @@ const messageCountOutput = useTransition(messageCount, {
   duration: duration,
   transition: TransitionPresets.easeOutExpo,
 });
-messageCount.value = 2000;
+let data = new FormData();
+axios.post(path.baseUrl + path.getAllMessage, data).then((response) => {
+	// empty the messages array, add the new messages
+	messageCount.value = response.data.data.length;
+}).catch((error) => {
+	console.log(error);
+})
 
 // 订单数
 const orderCount = ref(0);
@@ -65,24 +97,37 @@ const orderCountOutput = useTransition(orderCount, {
   transition: TransitionPresets.easeOutExpo,
 });
 orderCount.value = 2000;
+
+const openVisitList = () => {
+	let id = userStore.id;
+	console.log(id);
+  router.push({
+		path: "/visit-list",
+	});
+};
+
+const openMessageList = () => {
+	router.push({
+		path: "/message-list",
+	});
+};
+
 </script>
 
 <template>
   <div class="dashboard-container">
-    <!-- github角标 -->
-    <github-corner class="github-corner" />
 
     <!-- 用户信息 -->
     <el-row class="mb-8">
       <el-card class="w-full">
         <div class="flex justify-between flex-wrap">
           <div class="flex items-center">
-            <img
-              class="user-avatar"
-              :src="userStore.avatar + '?imageView2/1/w/80/h/80'"
-            />
+<!--            <img-->
+<!--              class="user-avatar"-->
+<!--              :src="userStore.avatar + '?imageView2/1/w/80/h/80'"-->
+<!--            />-->
             <span class="ml-[10px] text-[16px]">
-              {{ userStore.nickname }}
+            {{ name }}
             </span>
           </div>
 
@@ -90,43 +135,22 @@ orderCount.value = 2000;
             {{ greetings }}
           </div>
 
-          <div class="space-x-2 flex items-center">
-            <el-link
-              target="_blank"
-              type="danger"
-              href="https://blog.csdn.net/u013737132/article/details/130191394"
-              >官方0到1教程</el-link
-            >
-            <el-divider direction="vertical" />
-            <el-link
-              target="_blank"
-              type="success"
-              href="https://gitee.com/youlaiorg/vue3-element-admin"
-              >Gitee源码</el-link
-            >
-            <el-divider direction="vertical" />
-            <el-link
-              target="_blank"
-              type="primary"
-              href="https://github.com/youlaitech/vue3-element-admin"
-              >GitHub源码
-            </el-link>
-          </div>
+
         </div>
       </el-card>
     </el-row>
 
     <!-- 数据卡片 -->
     <el-row :gutter="40" class="mb-4">
-      <el-col :xs="24" :sm="12" :lg="6" class="mb-4">
-        <div class="data-box">
+      <el-col :xs="24" :sm="12" :lg="12" class="mb-4">
+        <div class="data-box" @click="openVisitList">
           <div
             class="text-[#40c9c6] hover:!text-white hover:bg-[#40c9c6] p-3 rounded"
           >
             <svg-icon icon-class="uv" size="3em" />
           </div>
           <div class="flex flex-col space-y-3">
-            <div class="text-[var(--el-text-color-secondary)]">访问数</div>
+            <div class="text-[var(--el-text-color-secondary)]">访问</div>
             <div class="text-lg">
               {{ Math.round(visitCountOutput) }}
             </div>
@@ -135,15 +159,15 @@ orderCount.value = 2000;
       </el-col>
 
       <!--消息数-->
-      <el-col :xs="24" :sm="12" :lg="6" class="mb-4">
-        <div class="data-box">
+      <el-col :xs="24" :sm="12" :lg="12" class="mb-4">
+        <div class="data-box"  @click="openMessageList" >
           <div
             class="text-[#36a3f7] hover:!text-white hover:bg-[#36a3f7] p-3 rounded"
           >
             <svg-icon icon-class="message" size="3em" />
           </div>
           <div class="flex flex-col space-y-3">
-            <div class="text-[var(--el-text-color-secondary)]">消息数</div>
+            <div class="text-[var(--el-text-color-secondary)]">通知</div>
             <div class="text-lg">
               {{ Math.round(messageCountOutput) }}
             </div>
@@ -151,41 +175,41 @@ orderCount.value = 2000;
         </div>
       </el-col>
 
-      <el-col :xs="24" :sm="12" :lg="6" class="mb-4">
-        <div class="data-box">
-          <div
-            class="text-[#f4516c] hover:!text-white hover:bg-[#f4516c] p-3 rounded"
-          >
-            <svg-icon icon-class="money" size="3em" />
-          </div>
-          <div class="flex flex-col space-y-3">
-            <div class="text-[var(--el-text-color-secondary)]">收入金额</div>
-            <div class="text-lg">
-              {{ Math.round(amountOutput) }}
-            </div>
-          </div>
-        </div>
-      </el-col>
-      <el-col :xs="24" :sm="12" :lg="6" class="mb-2">
-        <div class="data-box">
-          <div
-            class="text-[#34bfa3] hover:!text-white hover:bg-[#34bfa3] p-3 rounded"
-          >
-            <svg-icon icon-class="shopping" size="3em" />
-          </div>
-          <div class="flex flex-col space-y-3">
-            <div class="text-[var(--el-text-color-secondary)]">订单数</div>
-            <div class="text-lg">
-              {{ Math.round(orderCountOutput) }}
-            </div>
-          </div>
-        </div>
-      </el-col>
+<!--      <el-col :xs="24" :sm="12" :lg="6" class="mb-4">-->
+<!--        <div class="data-box">-->
+<!--          <div-->
+<!--            class="text-[#f4516c] hover:!text-white hover:bg-[#f4516c] p-3 rounded"-->
+<!--          >-->
+<!--            <svg-icon icon-class="money" size="3em" />-->
+<!--          </div>-->
+<!--          <div class="flex flex-col space-y-3">-->
+<!--            <div class="text-[var(&#45;&#45;el-text-color-secondary)]">收入金额</div>-->
+<!--            <div class="text-lg">-->
+<!--              {{ Math.round(amountOutput) }}-->
+<!--            </div>-->
+<!--          </div>-->
+<!--        </div>-->
+<!--      </el-col>-->
+<!--      <el-col :xs="24" :sm="12" :lg="6" class="mb-2">-->
+<!--        <div class="data-box">-->
+<!--          <div-->
+<!--            class="text-[#34bfa3] hover:!text-white hover:bg-[#34bfa3] p-3 rounded"-->
+<!--          >-->
+<!--            <svg-icon icon-class="shopping" size="3em" />-->
+<!--          </div>-->
+<!--          <div class="flex flex-col space-y-3">-->
+<!--            <div class="text-[var(&#45;&#45;el-text-color-secondary)]">订单数</div>-->
+<!--            <div class="text-lg">-->
+<!--              {{ Math.round(orderCountOutput) }}-->
+<!--            </div>-->
+<!--          </div>-->
+<!--        </div>-->
+<!--      </el-col>-->
     </el-row>
 
     <!-- Echarts 图表 -->
     <el-row :gutter="40">
-      <el-col :sm="24" :lg="8" class="mb-4">
+      <el-col :xs="24" :sm="12" :lg="12" class="mb-4">
         <BarChart
           id="barChart"
           height="400px"
@@ -194,7 +218,7 @@ orderCount.value = 2000;
         />
       </el-col>
 
-      <el-col :xs="24" :sm="12" :lg="8" class="mb-4">
+      <el-col :xs="24" :sm="12" :lg="12" class="mb-4">
         <PieChart
           id="pieChart"
           height="400px"
@@ -203,14 +227,14 @@ orderCount.value = 2000;
         />
       </el-col>
 
-      <el-col :xs="24" :sm="12" :lg="8" class="mb-4">
-        <RadarChart
-          id="radarChart"
-          height="400px"
-          width="100%"
-          class="bg-[var(--el-bg-color-overlay)]"
-        />
-      </el-col>
+<!--      <el-col :xs="24" :sm="12" :lg="8" class="mb-4">-->
+<!--        <RadarChart-->
+<!--          id="radarChart"-->
+<!--          height="400px"-->
+<!--          width="100%"-->
+<!--          class="bg-[var(&#45;&#45;el-bg-color-overlay)]"-->
+<!--        />-->
+<!--      </el-col>-->
     </el-row>
   </div>
 </template>

@@ -1,7 +1,7 @@
 <!--  线 + 柱混合图 -->
 <template>
   <el-card>
-    <template #header> 业绩柱状图 </template>
+    <template #header> weather </template>
     <div :id="id" :class="className" :style="{ height, width }" />
   </el-card>
 </template>
@@ -49,7 +49,7 @@ const options = {
   legend: {
     x: 'center',
     y: 'bottom',
-    data: ['收入', '毛利润', '收入增长率', '利润增长率'],
+    data: ['high', 'low','humidity'],
     textStyle: {
       color: '#999'
     }
@@ -57,7 +57,7 @@ const options = {
   xAxis: [
     {
       type: 'category',
-      data: ['浙江', '北京', '上海', '广东', '深圳'],
+      data: ['6.5', '6.6', '6.7', '6.8', '6.9'],
       axisPointer: {
         type: 'shadow'
       }
@@ -67,8 +67,8 @@ const options = {
     {
       type: 'value',
       min: 0,
-      max: 10000,
-      interval: 2000,
+      max: 50,
+      interval: 5,
       axisLabel: {
         formatter: '{value} '
       }
@@ -85,9 +85,9 @@ const options = {
   ],
   series: [
     {
-      name: '收入',
+      name: 'high',
       type: 'bar',
-      data: [7000, 7100, 7200, 7300, 7400],
+      data: [31, 27, 29, 31, 33],
       barWidth: 20,
       itemStyle: {
         color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
@@ -98,9 +98,9 @@ const options = {
       }
     },
     {
-      name: '毛利润',
+      name: 'low',
       type: 'bar',
-      data: [8000, 8200, 8400, 8600, 8800],
+      data: [18, 18, 22, 21, 20],
       barWidth: 20,
       itemStyle: {
         color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
@@ -111,23 +111,14 @@ const options = {
       }
     },
     {
-      name: '收入增长率',
+      name: 'humidity',
       type: 'line',
       yAxisIndex: 1,
-      data: [60, 65, 70, 75, 80],
+      data: [80, 65, 75, 70, 80],
       itemStyle: {
-        color: '#67C23A'
+        color: '#ffff00'
       }
     },
-    {
-      name: '利润增长率',
-      type: 'line',
-      yAxisIndex: 1,
-      data: [70, 75, 80, 85, 90],
-      itemStyle: {
-        color: '#409EFF'
-      }
-    }
   ]
 };
 

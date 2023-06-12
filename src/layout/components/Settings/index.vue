@@ -44,7 +44,7 @@ onMounted(() => {
 
 <template>
   <div class="settings-container">
-    <h3 class="text-base font-bold">项目配置</h3>
+    <h3 class="text-base font-bold">个性设置</h3>
     <el-divider>主题</el-divider>
 
     <div class="flex justify-center" @click.stop>
@@ -59,21 +59,21 @@ onMounted(() => {
       />
     </div>
 
-    <el-divider>界面设置</el-divider>
-    <div class="py-[8px] flex justify-between">
-      <span class="text-xs">开启 Tags-View</span>
-      <el-switch v-model="settingsStore.tagsView" />
-    </div>
+<!--    <el-divider>界面设置</el-divider>-->
+<!--&lt;!&ndash;    <div class="py-[8px] flex justify-between">&ndash;&gt;-->
+<!--&lt;!&ndash;      <span class="text-xs">开启 Tags-View</span>&ndash;&gt;-->
+<!--&lt;!&ndash;      <el-switch v-model="settingsStore.tagsView" />&ndash;&gt;-->
+<!--&lt;!&ndash;    </div>&ndash;&gt;-->
 
-    <div class="py-[8px] flex justify-between">
-      <span class="text-xs">固定 Header</span>
-      <el-switch v-model="settingsStore.fixedHeader" />
-    </div>
+<!--&lt;!&ndash;    <div class="py-[8px] flex justify-between">&ndash;&gt;-->
+<!--&lt;!&ndash;      <span class="text-xs">固定 Header</span>&ndash;&gt;-->
+<!--&lt;!&ndash;      <el-switch v-model="settingsStore.fixedHeader" />&ndash;&gt;-->
+<!--&lt;!&ndash;    </div>&ndash;&gt;-->
 
-    <div class="py-[8px] flex justify-between">
-      <span class="text-xs">侧边栏 Logo</span>
-      <el-switch v-model="settingsStore.sidebarLogo" />
-    </div>
+<!--    <div class="py-[8px] flex justify-between">-->
+<!--      <span class="text-xs">侧边栏 Logo</span>-->
+<!--      <el-switch v-model="settingsStore.sidebarLogo" />-->
+<!--    </div>-->
 
     <el-divider>主题颜色</el-divider>
 
@@ -87,46 +87,46 @@ onMounted(() => {
       />
     </ul>
 
-    <el-divider>导航设置</el-divider>
+<!--    <el-divider>导航设置</el-divider>-->
 
-    <ul class="layout">
-      <el-tooltip content="左侧模式" placement="bottom">
-        <li
-          :class="
-            'layout-item layout-left ' +
-            (settingsStore.layout == 'left' ? 'is-active' : '')
-          "
-          @click="changeLayout('left')"
-        >
-          <div />
-          <div />
-        </li>
-      </el-tooltip>
-      <el-tooltip content="顶部模式" placement="bottom">
-        <li
-          :class="
-            'layout-item layout-top ' +
-            (settingsStore.layout == 'top' ? 'is-active' : '')
-          "
-          @click="changeLayout('top')"
-        >
-          <div />
-          <div />
-        </li>
-      </el-tooltip>
-      <el-tooltip content="混合模式" placement="bottom">
-        <li
-          :class="
-            'layout-item layout-mix ' +
-            (settingsStore.layout == 'mix' ? 'is-active' : '')
-          "
-          @click="changeLayout('mix')"
-        >
-          <div />
-          <div />
-        </li>
-      </el-tooltip>
-    </ul>
+<!--    <ul class="layout">-->
+<!--      <el-tooltip content="左侧模式" placement="bottom">-->
+<!--        <li-->
+<!--          :class="-->
+<!--            'layout-item layout-left ' +-->
+<!--            (settingsStore.layout == 'left' ? 'is-active' : '')-->
+<!--          "-->
+<!--          @click="changeLayout('left')"-->
+<!--        >-->
+<!--          <div />-->
+<!--          <div />-->
+<!--        </li>-->
+<!--      </el-tooltip>-->
+<!--      <el-tooltip content="顶部模式" placement="bottom">-->
+<!--        <li-->
+<!--          :class="-->
+<!--            'layout-item layout-top ' +-->
+<!--            (settingsStore.layout == 'top' ? 'is-active' : '')-->
+<!--          "-->
+<!--          @click="changeLayout('top')"-->
+<!--        >-->
+<!--          <div />-->
+<!--          <div />-->
+<!--        </li>-->
+<!--      </el-tooltip>-->
+<!--      <el-tooltip content="混合模式" placement="bottom">-->
+<!--        <li-->
+<!--          :class="-->
+<!--            'layout-item layout-mix ' +-->
+<!--            (settingsStore.layout == 'mix' ? 'is-active' : '')-->
+<!--          "-->
+<!--          @click="changeLayout('mix')"-->
+<!--        >-->
+<!--          <div />-->
+<!--          <div />-->
+<!--        </li>-->
+<!--      </el-tooltip>-->
+<!--    </ul>-->
   </div>
 </template>
 

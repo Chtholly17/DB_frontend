@@ -6,11 +6,10 @@ export default {
   },
   // 登录页面国际化
   login: {
-    title: 'vue3-element-admin',
-    username: 'Username',
+    title: 'Smart Community',
+    username: 'Usernumber',
     password: 'Password',
     login: 'Login',
-    verifyCode: 'Verify Code',
   },
   // 导航栏国际化
   navbar: {

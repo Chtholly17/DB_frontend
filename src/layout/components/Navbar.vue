@@ -45,6 +45,13 @@ function logout() {
       });
   });
 }
+
+/**
+ * 跳转到缴费页面
+ */
+function chargePage() {
+	router.push(`/charge-page`);
+}
 </script>
 
 <template>
@@ -52,11 +59,6 @@ function logout() {
   <div class="navbar">
     <!-- 左侧面包屑 -->
     <div class="flex">
-      <hamburger
-        :is-active="appStore.sidebar.opened"
-        @toggle-click="toggleSideBar"
-      />
-      <breadcrumb />
     </div>
 
     <!-- 右侧导航设置 -->
@@ -69,10 +71,7 @@ function logout() {
             :icon-class="isFullscreen ? 'exit-fullscreen' : 'fullscreen'"
           />
         </div>
-        <!-- 布局大小 -->
-        <el-tooltip content="布局大小" effect="dark" placement="bottom">
-          <size-select class="setting-item" />
-        </el-tooltip>
+
         <!--语言选择-->
         <lang-select class="setting-item" />
       </div>
@@ -80,14 +79,14 @@ function logout() {
       <!-- 用户头像 -->
       <el-dropdown trigger="click">
         <div class="avatar-container">
-          <img :src="userStore.avatar + '?imageView2/1/w/80/h/80'" />
+						<text> 更多功能</text>
           <i-ep-caret-bottom class="w-3 h-3" />
         </div>
         <template #dropdown>
           <el-dropdown-menu>
-            <router-link to="/">
-              <el-dropdown-item>{{ $t("navbar.dashboard") }}</el-dropdown-item>
-            </router-link>
+			  	<el-dropdown-item divided @click="chargePage">
+						水电缴费
+			  	</el-dropdown-item>
             <a
               target="_blank"
               href="https://github.com/youlaitech/vue3-element-admin"

@@ -1,7 +1,7 @@
 <!-- 饼图 -->
 <template>
   <el-card>
-    <template #header> 产品分类饼图 </template>
+    <template #header> shops categories </template>
     <div :id="id" :class="className" :style="{ height, width }" />
   </el-card>
 </template>
@@ -53,15 +53,17 @@ const options = {
         borderRadius: 1,
         color: function (params: any) {
           //自定义颜色
-          const colorList = ['#409EFF', '#67C23A', '#E6A23C', '#F56C6C'];
+          const colorList = ['#409EFF', '#67C23A', '#24b5a1','#ce1081','#ee0c2f', '#F56C6C'];
           return colorList[params.dataIndex];
         }
       },
       data: [
-        { value: 26, name: '家用电器' },
-        { value: 27, name: '户外运动' },
-        { value: 24, name: '汽车用品' },
-        { value: 23, name: '手机数码' }
+        { value: 12, name: 'fresh' },
+        { value: 27, name: 'restaurant' },
+        { value: 11, name: 'clothing' },
+        { value: 5, name: 'electronic' },
+		  	{ value: 25, name: 'amusement' },
+		  	{ value: 20, name: 'other' },
       ]
     }
   ]
